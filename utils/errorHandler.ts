@@ -21,7 +21,7 @@ const formatValidationErrors = (zodError: ZodError) => {
     }));
 };
 
-const handleError = (error: unknown, res: Response, code: number = 500) => {
+export const handleError = (error: unknown, res: Response, code: number = 500) => {
     console.error("Error occurred:", error);
 
     if (error instanceof ZodError) {
@@ -43,5 +43,3 @@ const handleError = (error: unknown, res: Response, code: number = 500) => {
         message: "Internal server error",
     });
 };
-
-export { handleError };

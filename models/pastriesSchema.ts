@@ -8,9 +8,9 @@ export const pastryInputSchema = z
             .max(20, { message: "Pastry name can't exceed 20 characters." }),
         description: z
             .string()
-            .min(10, { message: "Pastry description if included needs to be at least 10 characters long." })
-            .max(100, { message: "Pastry name can't exceed 100 characters." })
-            .optional(),
+            .min(10, { message: "Pastry description needs to be at least 10 characters long." })
+            .max(100, { message: "Pastry name can't exceed 100 characters." }),
+        price: z.number().positive({ message: "Pastry price needs to be a positive number." }),
         allergens: z
             .array(
                 z.union([
@@ -25,6 +25,13 @@ export const pastryInputSchema = z
     })
     .strict(); // Tillåter enbart nycklar definierade i schema.
 
+export const pastryUpdateSchema = pastryInputSchema
+    .partial()
+    .refine((obj) => Object.keys(obj).length > 0, {
+        message: "At least one field must be provided for update",
+    })
+    .strict();
+
 export const pastrySchema = pastryInputSchema.extend({
     id: z.number().min(1).positive(),
 });
@@ -32,5 +39,6 @@ export const pastrySchema = pastryInputSchema.extend({
 export const pastriesSchema = z.array(pastrySchema);
 
 export type PastryInput = z.infer<typeof pastryInputSchema>;
+export type PastryUpdate = z.infer<typeof pastryUpdateSchema>;
 export type Pastry = z.infer<typeof pastrySchema>;
 export type Pastries = z.infer<typeof pastriesSchema>;
