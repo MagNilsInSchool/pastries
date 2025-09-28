@@ -44,7 +44,7 @@ Json required in request body ex:
 
 Allergens can be included as an optional array of values.
 
-Only these values are accepted: nuts, gluten, dairy, soy, eggs.
+Only these values are accepted: "nuts", "gluten", "dairy", "soy", "eggs".
 
 ex:
 
@@ -53,7 +53,7 @@ ex:
     "name": "beans",
     "description": "I can't believe it's not butter.",
     "price": 99,
-    "allergens": ["gluten"]
+    "allergens": ["soy"]
 }
 ```
 
@@ -88,7 +88,7 @@ Making a DELETE to url will attempt to delete a pastry.
 Validation is done to ensure that the system does not crash due to unexpected data and to prevent malicious code.
 
 -   `pastryInputSchema`: Validates the user input of pastry objects. Since ID is not something coming from the user it is excluded. Only name, description, price and allergens are allowed.
--   `pastryUpdateSchema`: Partial makes every key of pastryInputSchema optional but refine makes sure at least one field is supplied in the request body. Only keys defined in pastryInputSchema is allowed and if a key is supplied it still needs to validate in accordance to pastryInputSchema.
+-   `pastryUpdateSchema`: Partial makes every key of pastryInputSchema optional but with the refine we make sure at least one field is supplied in the request body. Only keys defined in pastryInputSchema is allowed and if a key is supplied it still needs to validate in accordance to pastryInputSchema.
 -   `pastrySchema`: Includes id.
 -   `pastriesSchema`: Is an array of pastries.
 
