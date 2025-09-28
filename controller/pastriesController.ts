@@ -8,6 +8,7 @@ import {
     pastryInputSchema,
 } from "../models/pastriesSchema.ts";
 import { CustomError, handleError } from "../utils/errorHandler.ts";
+import { normalized } from "../utils/index.ts";
 
 let pastries: Pastries = [
     { id: 1, name: "Kanelbulle", description: "King of pastries.", price: 20, allergens: ["gluten", "dairy"] },
@@ -30,6 +31,11 @@ export const createPastry = (req: Request<{}, {}, PastryInput>, res: Response) =
 
         const validatedPastryInput = pastryInputSchema.safeParse(body);
         if (!validatedPastryInput.success) throw validatedPastryInput.error;
+        const isPastryAlreadyAdded = pastries.some(
+            (pastry) => normalized(pastry.name) === normalized(validatedPastryInput.data.name)
+        );
+        if (isPastryAlreadyAdded)
+            throw new CustomError(`${validatedPastryInput.data.name} already exists on the menu.`, 409);
 
         const newPastry: Pastry = {
             id: pastries.length > 0 ? pastries[pastries.length - 1].id + 1 : 1,
@@ -56,6 +62,12 @@ export const updatePastry = (req: Request<{ id: string }, {}, PastryUpdate>, res
         const validatedUpdate = pastryUpdateSchema.safeParse(req.body);
 
         if (!validatedUpdate.success) throw validatedUpdate.error;
+        const newName = validatedUpdate.data.name;
+        const isPastryAlreadyAdded = newName
+            ? pastries.some((pastry) => normalized(pastry.name) === normalized(newName))
+            : false;
+
+        if (isPastryAlreadyAdded) throw new CustomError(`${newName} already exists on the menu.`, 409);
 
         Object.assign(pastry, validatedUpdate.data); //* Används för att mosa ihop ett eller fler object till ett annat. |-> Object.assign(target, source1,source2...) <-|
 
